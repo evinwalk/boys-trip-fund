@@ -7,18 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* ── CONFIG ─────────────────────────────────────────────────── */
-  /*
-    SETUP REQUIRED:
-    1. Follow SETUP.md to create your Google Sheet and service account
-    2. Replace the three values below with your own
-  */
   :root {
-    --sheet-id: "YOUR_GOOGLE_SHEET_ID";           /* from the sheet URL */
-    --api-key: "YOUR_GOOGLE_SHEETS_API_KEY";       /* from Google Cloud Console */
-    --apps-script-url: "YOUR_APPS_SCRIPT_WEB_APP_URL"; /* for writes — see SETUP.md */
-
-    /* ── Design tokens ── */
     --bg:        #0d0f14;
     --surface:   #151820;
     --surface2:  #1c2030;
@@ -31,7 +20,6 @@
     --green:     #4ade80;
     --red:       #f87171;
     --blue:      #60a5fa;
-
     --r-sm: 8px;
     --r-md: 14px;
     --r-lg: 20px;
@@ -48,7 +36,6 @@
     min-height: 100vh;
   }
 
-  /* ── HEADER ── */
   header {
     display: flex;
     align-items: center;
@@ -62,11 +49,7 @@
     z-index: 100;
   }
 
-  .logo {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-  }
+  .logo { display: flex; align-items: baseline; gap: 10px; }
 
   .logo-title {
     font-family: 'Bebas Neue', sans-serif;
@@ -100,7 +83,6 @@
   .status-dot.online { background: var(--green); box-shadow: 0 0 6px var(--green); }
   .status-dot.error  { background: var(--red); }
 
-  /* ── LAYOUT ── */
   main {
     max-width: 980px;
     margin: 0 auto;
@@ -110,7 +92,6 @@
     gap: 32px;
   }
 
-  /* ── SUMMARY STRIP ── */
   .summary-strip {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -145,17 +126,11 @@
     line-height: 1;
     margin-top: 4px;
   }
-
   .stat-value.accent { color: var(--accent); }
   .stat-value.green  { color: var(--green); }
 
-  .stat-sub {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-  /* ── GOAL BAR ── */
   .goal-section {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -173,7 +148,6 @@
   .goal-title {
     font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.5px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -200,11 +174,7 @@
     min-width: 4px;
   }
 
-  .goal-members {
-    display: flex;
-    gap: 12px;
-    margin-top: 18px;
-  }
+  .goal-members { display: flex; gap: 12px; margin-top: 18px; }
 
   .member-pill {
     flex: 1;
@@ -246,7 +216,6 @@
     transition: width 0.5s ease;
   }
 
-  /* ── TWO COLUMN ── */
   .two-col {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
@@ -254,7 +223,6 @@
     align-items: start;
   }
 
-  /* ── LOG PAYMENT FORM ── */
   .panel {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -271,18 +239,9 @@
     margin-bottom: 20px;
   }
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 14px;
-  }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
 
-  .form-label {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--muted);
-  }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--muted); }
 
   .form-input, .form-select {
     background: var(--surface2);
@@ -297,10 +256,7 @@
     width: 100%;
     -webkit-appearance: none;
   }
-
-  .form-input:focus, .form-select:focus {
-    border-color: var(--accent);
-  }
+  .form-input:focus, .form-select:focus { border-color: var(--accent); }
 
   .form-select {
     cursor: pointer;
@@ -310,9 +266,7 @@
     padding-right: 36px;
   }
 
-  .amount-wrap {
-    position: relative;
-  }
+  .amount-wrap { position: relative; }
 
   .amount-prefix {
     position: absolute;
@@ -343,15 +297,9 @@
     transition: opacity 0.2s, transform 0.1s;
     letter-spacing: 0.5px;
   }
-
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #0d0f14;
-  }
-
+  .btn-primary { background: var(--accent); color: #0d0f14; }
   .btn-primary:hover:not(:disabled) { opacity: 0.88; }
 
   .form-feedback {
@@ -363,15 +311,9 @@
   .form-feedback.success { color: var(--green); }
   .form-feedback.error   { color: var(--red); }
 
-  /* ── HISTORY TABLE ── */
-  .history-wrap {
-    overflow-x: auto;
-  }
+  .history-wrap { overflow-x: auto; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
+  table { width: 100%; border-collapse: collapse; }
 
   thead th {
     font-size: 10px;
@@ -384,24 +326,13 @@
     border-bottom: 1px solid var(--border);
   }
 
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: rgba(255,255,255,0.025); }
 
-  tbody td {
-    padding: 12px;
-    font-size: 14px;
-    vertical-align: middle;
-  }
+  tbody td { padding: 12px; font-size: 14px; vertical-align: middle; }
 
-  .td-mono {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-  }
+  .td-mono { font-family: 'DM Mono', monospace; font-size: 13px; }
 
   .td-amount {
     font-family: 'DM Mono', monospace;
@@ -418,7 +349,6 @@
     font-weight: 500;
     letter-spacing: 0.3px;
   }
-
   .badge-blue  { background: rgba(96,165,250,0.12); color: var(--blue); }
   .badge-amber { background: rgba(245,197,66,0.12); color: var(--accent); }
   .badge-green { background: rgba(74,222,128,0.12); color: var(--green); }
@@ -441,33 +371,8 @@
     vertical-align: middle;
     margin-right: 6px;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── SETUP BANNER ── */
-  .setup-banner {
-    background: rgba(245,197,66,0.07);
-    border: 1px solid rgba(245,197,66,0.25);
-    border-radius: var(--r-md);
-    padding: 18px 22px;
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
-
-  .setup-banner svg { flex-shrink: 0; margin-top: 2px; }
-
-  .setup-banner-text { font-size: 13px; color: var(--text); line-height: 1.7; }
-  .setup-banner-text strong { color: var(--accent); }
-  .setup-banner-text code {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    background: rgba(255,255,255,0.07);
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-
-  /* ── MOBILE ── */
   @media (max-width: 680px) {
     header { padding: 18px 20px; }
     main { padding: 24px 16px 60px; }
@@ -484,74 +389,59 @@
 <header>
   <div class="logo">
     <span class="logo-title">Boys Trip Fund</span>
-    <span class="logo-year" id="tripYear">2026</span>
+    <span class="logo-year" id="tripYear">2027</span>
   </div>
   <div class="header-status">
     <span class="status-dot" id="statusDot"></span>
-    <span id="statusText">Connecting…</span>
+    <span id="statusText">Connecting...</span>
   </div>
 </header>
 
 <main>
 
-  <!-- SETUP BANNER — shown until configured -->
-  <div class="setup-banner" id="setupBanner" style="display:none;">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#f5c542" stroke-width="1.5">
-      <circle cx="10" cy="10" r="8"/><path d="M10 6v4m0 3v1"/>
-    </svg>
-    <div class="setup-banner-text">
-      <strong>Setup required</strong> — Edit the three config values at the top of this file (<code>sheet-id</code>, <code>api-key</code>, <code>apps-script-url</code>).
-      Open <strong>SETUP.md</strong> for step-by-step instructions.
-    </div>
-  </div>
-
-  <!-- SUMMARY STRIP -->
   <div class="summary-strip">
     <div class="stat-card">
       <span class="stat-label">Total in fund</span>
-      <span class="stat-value accent" id="totalFund">—</span>
-      <span class="stat-sub" id="totalSub">loading…</span>
+      <span class="stat-value accent" id="totalFund">--</span>
+      <span class="stat-sub" id="totalSub">loading...</span>
     </div>
     <div class="stat-card">
       <span class="stat-label">Contributions</span>
-      <span class="stat-value" id="totalContribs">—</span>
-      <span class="stat-sub" id="contribSub">across all members</span>
+      <span class="stat-value" id="totalContribs">--</span>
+      <span class="stat-sub">across all members</span>
     </div>
     <div class="stat-card">
       <span class="stat-label">Last payment</span>
-      <span class="stat-value" id="lastPayment" style="font-size:22px; padding-top:8px;">—</span>
+      <span class="stat-value" id="lastPayment" style="font-size:22px; padding-top:8px;">--</span>
       <span class="stat-sub" id="lastDate"></span>
     </div>
   </div>
 
-  <!-- GOAL / MEMBER BREAKDOWN -->
   <div class="goal-section">
     <div class="goal-header">
       <span class="goal-title">Fund progress</span>
-      <span class="goal-amount" id="goalAmountLabel">$0 / $1,500</span>
+      <span class="goal-amount" id="goalAmountLabel">$0 / $4,000</span>
     </div>
     <div class="goal-bar-track">
       <div class="goal-bar-fill" id="goalBarFill" style="width:0%"></div>
     </div>
     <div class="goal-members" id="memberBreakdown">
       <div class="member-pill">
-        <span class="member-name">Loading…</span>
-        <span class="member-paid">—</span>
+        <span class="member-name">Loading...</span>
+        <span class="member-paid">--</span>
       </div>
     </div>
   </div>
 
-  <!-- FORM + HISTORY -->
   <div class="two-col">
 
-    <!-- LOG PAYMENT -->
     <div class="panel">
       <div class="panel-title">Log a payment</div>
 
       <div class="form-group">
         <label class="form-label">Who paid?</label>
         <select class="form-select" id="payerSelect">
-          <option value="">Select member…</option>
+          <option value="">Select member...</option>
         </select>
       </div>
 
@@ -577,7 +467,6 @@
       <div class="form-feedback" id="formFeedback"></div>
     </div>
 
-    <!-- HISTORY -->
     <div class="panel">
       <div class="panel-title">Payment history</div>
       <div class="history-wrap">
@@ -594,7 +483,7 @@
             <tr>
               <td colspan="4">
                 <div class="empty-state">
-                  <span class="spinner"></span> Loading payments…
+                  <span class="spinner"></span> Loading payments...
                 </div>
               </td>
             </tr>
@@ -607,45 +496,30 @@
 </main>
 
 <script>
-// ──────────────────────────────────────────────────────────────────
-//  CONFIG  — edit these in the CSS :root block above OR here
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  CONFIG
+// ─────────────────────────────────────────────────────────────────
 const CONFIG = {
-  sheetId:        '',   // paste your Google Sheet ID
-  apiKey:         '',   // paste your Google Sheets API key
-  appsScriptUrl:  '',   // paste your Apps Script web app URL
-  sheetName:      'Payments',
-  tripGoal:       1500, // total fund goal in dollars
-  tripYear:       new Date().getFullYear(),
-  members:        ['Devaughn', 'Friend 1', 'Friend 2'],  // ← customize names
+  sheetId:    '1qU86aht7eSZQYS2ptvfd8FtcFcBmcYryEc_m7IVDMKY',
+  apiKey:     'AIzaSyCId7wQf9OH4q_VJNDBdoyA6CKhHF2jHrc',
+  workerUrl:  'https://boys-trip-fund-api.devaughn-walker1993.workers.dev/log',
+  sheetName:  'Payments',
+  tripGoal:   4000,
+  tripYear:   2027,
+  members:    ['Devaughn', 'Nathan', 'Justin'],
 };
 
-// ── Pull config values from CSS variables if not set above
-(function seedConfig() {
-  const s = getComputedStyle(document.documentElement);
-  ['sheetId','apiKey','appsScriptUrl'].forEach(k => {
-    const cssKey = k === 'sheetId' ? '--sheet-id'
-                 : k === 'apiKey'  ? '--api-key'
-                 : '--apps-script-url';
-    if (!CONFIG[k]) {
-      const val = s.getPropertyValue(cssKey).trim().replace(/"/g, '');
-      if (val && !val.startsWith('YOUR_')) CONFIG[k] = val;
-    }
-  });
-})();
-
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 //  STATE
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 let payments = [];
 
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 //  INIT
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tripYear').textContent = CONFIG.tripYear;
 
-  // Populate member select
   const sel = document.getElementById('payerSelect');
   CONFIG.members.forEach(m => {
     const opt = document.createElement('option');
@@ -654,32 +528,24 @@ document.addEventListener('DOMContentLoaded', () => {
     sel.appendChild(opt);
   });
 
-  // Default date to today
   document.getElementById('dateInput').value = todayISO();
-
-  // Check if configured
-  if (!CONFIG.sheetId || !CONFIG.apiKey || !CONFIG.appsScriptUrl) {
-    document.getElementById('setupBanner').style.display = 'flex';
-    setStatus('Not configured', 'error');
-    renderEmpty();
-    return;
-  }
-
   loadPayments();
 });
 
-// ──────────────────────────────────────────────────────────────────
-//  GOOGLE SHEETS — READ
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  READ — Google Sheets API (read-only, uses API key)
+// ─────────────────────────────────────────────────────────────────
 async function loadPayments() {
-  setStatus('Syncing…', '');
+  setStatus('Syncing...', '');
   try {
-    const range = encodeURIComponent(`${CONFIG.sheetName}!A:D`);
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${range}?key=${CONFIG.apiKey}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Sheets API ${res.status}`);
+    const range = encodeURIComponent(CONFIG.sheetName + '!A:D');
+    const url   = 'https://sheets.googleapis.com/v4/spreadsheets/'
+                + CONFIG.sheetId + '/values/' + range
+                + '?key=' + CONFIG.apiKey;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error('Sheets API ' + res.status);
     const data = await res.json();
-    const rows = (data.values || []).slice(1); // skip header row
+    const rows = (data.values || []).slice(1);
     payments = rows.map(r => ({
       date:   r[0] || '',
       member: r[1] || '',
@@ -695,9 +561,9 @@ async function loadPayments() {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────
-//  GOOGLE SHEETS — WRITE (via Apps Script)
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  WRITE — Cloudflare Worker proxy (handles CORS server-side)
+// ─────────────────────────────────────────────────────────────────
 async function logPayment() {
   const payer  = document.getElementById('payerSelect').value;
   const amount = parseFloat(document.getElementById('amountInput').value);
@@ -707,20 +573,18 @@ async function logPayment() {
   const fb = document.getElementById('formFeedback');
   fb.className = 'form-feedback';
 
-  if (!payer)          { fb.textContent = 'Select a member.';       fb.className += ' error'; return; }
+  if (!payer)                 { fb.textContent = 'Select a member.';      fb.className += ' error'; return; }
   if (!amount || amount <= 0) { fb.textContent = 'Enter a valid amount.'; fb.className += ' error'; return; }
-  if (!date)           { fb.textContent = 'Pick a date.';           fb.className += ' error'; return; }
+  if (!date)                  { fb.textContent = 'Pick a date.';          fb.className += ' error'; return; }
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.textContent = 'Saving…';
+  btn.textContent = 'Saving...';
   fb.textContent = '';
 
   try {
-    const payload = { date, member: payer, amount, note, sheetId: CONFIG.sheetId };
+    const payload = { date, member: payer, amount, note };
 
-    // POST to our Cloudflare Worker proxy, which writes to the Sheet
-    // server-side (no CORS issues, full error visibility).
     const res = await fetch(CONFIG.workerUrl, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -728,17 +592,17 @@ async function logPayment() {
     });
 
     const result = await res.json();
-    if (!res.ok || result.error) throw new Error(result.error || `HTTP ${res.status}`);
+    if (!res.ok || result.error) throw new Error(result.error || 'HTTP ' + res.status);
 
-    fb.textContent = '✓ Payment logged!';
+    fb.textContent = 'Payment logged!';
     fb.className = 'form-feedback success';
     document.getElementById('amountInput').value = '';
-    document.getElementById('noteInput').value = '';
-    document.getElementById('dateInput').value = todayISO();
+    document.getElementById('noteInput').value   = '';
+    document.getElementById('dateInput').value   = todayISO();
     setTimeout(() => loadPayments(), 1500);
 
   } catch (e) {
-    fb.textContent = 'Error saving. Check console.';
+    fb.textContent = 'Error: ' + e.message;
     fb.className = 'form-feedback error';
     console.error(e);
   } finally {
@@ -747,9 +611,9 @@ async function logPayment() {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 //  RENDER
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 function renderAll() {
   renderSummary();
   renderGoal();
@@ -758,16 +622,16 @@ function renderAll() {
 
 function renderSummary() {
   const total = payments.reduce((s, p) => s + p.amount, 0);
-  document.getElementById('totalFund').textContent  = fmt(total);
-  document.getElementById('totalSub').textContent   = `across ${CONFIG.members.length} members`;
+  document.getElementById('totalFund').textContent     = fmt(total);
+  document.getElementById('totalSub').textContent      = 'across ' + CONFIG.members.length + ' members';
   document.getElementById('totalContribs').textContent = payments.length;
 
-  const last = [...payments].sort((a,b) => b.date.localeCompare(a.date))[0];
+  const last = [...payments].sort((a, b) => b.date.localeCompare(a.date))[0];
   if (last) {
     document.getElementById('lastPayment').textContent = last.member;
-    document.getElementById('lastDate').textContent    = `${fmt(last.amount)} on ${fmtDate(last.date)}`;
+    document.getElementById('lastDate').textContent    = fmt(last.amount) + ' on ' + fmtDate(last.date);
   } else {
-    document.getElementById('lastPayment').textContent = '—';
+    document.getElementById('lastPayment').textContent = '--';
     document.getElementById('lastDate').textContent    = 'No payments yet';
   }
 }
@@ -775,64 +639,70 @@ function renderSummary() {
 function renderGoal() {
   const total = payments.reduce((s, p) => s + p.amount, 0);
   const pct   = Math.min(100, (total / CONFIG.tripGoal) * 100);
-  document.getElementById('goalBarFill').style.width = pct + '%';
-  document.getElementById('goalAmountLabel').textContent = `${fmt(total)} / ${fmt(CONFIG.tripGoal)}`;
+  document.getElementById('goalBarFill').style.width        = pct + '%';
+  document.getElementById('goalAmountLabel').textContent    = fmt(total) + ' / ' + fmt(CONFIG.tripGoal);
 
   const breakdown = document.getElementById('memberBreakdown');
   breakdown.innerHTML = '';
-  CONFIG.members.forEach((m, i) => {
-    const paid    = payments.filter(p => p.member === m).reduce((s,p) => s + p.amount, 0);
-    const share   = CONFIG.tripGoal / CONFIG.members.length;
-    const mPct    = Math.min(100, (paid / share) * 100);
-    const pill    = document.createElement('div');
+  CONFIG.members.forEach(m => {
+    const paid  = payments.filter(p => p.member === m).reduce((s, p) => s + p.amount, 0);
+    const share = CONFIG.tripGoal / CONFIG.members.length;
+    const mPct  = Math.min(100, (paid / share) * 100);
+    const pill  = document.createElement('div');
     pill.className = 'member-pill';
-    pill.innerHTML = `
-      <span class="member-name">${m}</span>
-      <span class="member-paid">${fmt(paid)}</span>
-      <div class="member-bar-track">
-        <div class="member-bar-fill" style="width:${mPct}%"></div>
-      </div>`;
+    pill.innerHTML =
+      '<span class="member-name">'  + m          + '</span>'
+    + '<span class="member-paid">'  + fmt(paid)  + '</span>'
+    + '<div class="member-bar-track">'
+    +   '<div class="member-bar-fill" style="width:' + mPct + '%"></div>'
+    + '</div>';
     breakdown.appendChild(pill);
   });
 }
 
 function renderHistory() {
-  const body = document.getElementById('historyBody');
-  const sorted = [...payments].sort((a,b) => b.date.localeCompare(a.date));
+  const body   = document.getElementById('historyBody');
+  const sorted = [...payments].sort((a, b) => b.date.localeCompare(a.date));
   if (!sorted.length) {
-    body.innerHTML = `<tr><td colspan="4"><div class="empty-state">No payments yet — log the first one!</div></td></tr>`;
+    body.innerHTML = '<tr><td colspan="4"><div class="empty-state">No payments yet -- log the first one!</div></td></tr>';
     return;
   }
-  const colors = ['badge-blue','badge-amber','badge-green'];
+  const colors = ['badge-blue', 'badge-amber', 'badge-green'];
   body.innerHTML = sorted.map(p => {
     const mIdx  = CONFIG.members.indexOf(p.member);
     const badge = colors[mIdx % colors.length] || 'badge-blue';
-    return `
-      <tr>
-        <td class="td-mono">${fmtDate(p.date)}</td>
-        <td><span class="badge ${badge}">${p.member}</span></td>
-        <td class="td-amount">${fmt(p.amount)}</td>
-        <td style="color:var(--muted); font-size:13px;">${p.note || '—'}</td>
-      </tr>`;
+    return '<tr>'
+      + '<td class="td-mono">' + fmtDate(p.date) + '</td>'
+      + '<td><span class="badge ' + badge + '">' + p.member + '</span></td>'
+      + '<td class="td-amount">' + fmt(p.amount) + '</td>'
+      + '<td style="color:var(--muted);font-size:13px;">' + (p.note || '--') + '</td>'
+      + '</tr>';
   }).join('');
 }
 
 function renderEmpty(msg) {
   document.getElementById('historyBody').innerHTML =
-    `<tr><td colspan="4"><div class="empty-state">${msg || 'Not configured — see setup banner above.'}</div></td></tr>`;
+    '<tr><td colspan="4"><div class="empty-state">' + (msg || 'Unable to load payments.') + '</div></td></tr>';
 }
 
-// ──────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 //  HELPERS
-// ──────────────────────────────────────────────────────────────────
-function fmt(n)     { return '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-function todayISO() { return new Date().toISOString().split('T')[0]; }
-function fmtDate(iso) {
-  if (!iso) return '—';
-  const [y,m,d] = iso.split('-');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
+// ─────────────────────────────────────────────────────────────────
+function fmt(n) {
+  return '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+
+function todayISO() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function fmtDate(iso) {
+  if (!iso) return '--';
+  const parts  = iso.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(parts[1]) - 1] + ' ' + parseInt(parts[2]) + ', ' + parts[0];
+}
+
 function setStatus(text, state) {
   document.getElementById('statusText').textContent = text;
   const dot = document.getElementById('statusDot');
@@ -840,7 +710,7 @@ function setStatus(text, state) {
 }
 
 // Auto-refresh every 60 seconds
-setInterval(() => { if (CONFIG.sheetId && CONFIG.apiKey) loadPayments(); }, 60000);
+setInterval(loadPayments, 60000);
 </script>
 </body>
 </html>
