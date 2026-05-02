@@ -14,9 +14,9 @@
     2. Replace the three values below with your own
   */
   :root {
-    --sheet-id: "1qU86aht7eSZQYS2ptvfd8FtcFcBmcYryEc_m7IVDMKY";           /* from the sheet URL */
-    --api-key: "AIzaSyCId7wQf9OH4q_VJNDBdoyA6CKhHF2jHrc";       /* from Google Cloud Console */
-    --apps-script-url: "https://script.google.com/macros/s/AKfycbz9lVufombVN-hsNgnsBJiviU4IbhIYDbG8rzIkfhRPZmsJFcksJKi1HI76I9kXPHdxXw/exec"; /* for writes — see SETUP.md */
+    --sheet-id: "YOUR_GOOGLE_SHEET_ID";           /* from the sheet URL */
+    --api-key: "YOUR_GOOGLE_SHEETS_API_KEY";       /* from Google Cloud Console */
+    --apps-script-url: "YOUR_APPS_SCRIPT_WEB_APP_URL"; /* for writes — see SETUP.md */
 
     /* ── Design tokens ── */
     --bg:        #0d0f14;
@@ -611,13 +611,13 @@
 //  CONFIG  — edit these in the CSS :root block above OR here
 // ──────────────────────────────────────────────────────────────────
 const CONFIG = {
-  sheetId:        '1qU86aht7eSZQYS2ptvfd8FtcFcBmcYryEc_m7IVDMKY',   // paste your Google Sheet ID
-  apiKey:         'AIzaSyCId7wQf9OH4q_VJNDBdoyA6CKhHF2jHrc',   // paste your Google Sheets API key
-  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbz9lVufombVN-hsNgnsBJiviU4IbhIYDbG8rzIkfhRPZmsJFcksJKi1HI76I9kXPHdxXw/exec',   // paste your Apps Script web app URL
+  sheetId:        '',   // paste your Google Sheet ID
+  apiKey:         '',   // paste your Google Sheets API key
+  appsScriptUrl:  '',   // paste your Apps Script web app URL
   sheetName:      'Payments',
-  tripGoal:       4000, // total fund goal in dollars
-  tripYear:       2027, // new Date().getFullYear()
-  members:        ['Devaughn', 'Nathan', 'Justin'],  // ← customize names
+  tripGoal:       1500, // total fund goal in dollars
+  tripYear:       new Date().getFullYear(),
+  members:        ['Devaughn', 'Friend 1', 'Friend 2'],  // ← customize names
 };
 
 // ── Pull config values from CSS variables if not set above
@@ -718,17 +718,25 @@ async function logPayment() {
 
   try {
     const payload = { date, member: payer, amount, note, sheetId: CONFIG.sheetId };
-    const res = await fetch(CONFIG.appsScriptUrl, {
-      method: 'POST',
-      body: JSON.stringify(payload),
+
+    // Apps Script doesn't return CORS headers on POST redirects.
+    // mode:'no-cors' + Content-Type:'text/plain' avoids the preflight entirely.
+    // The response will be opaque (unreadable) but the write still goes through.
+    // We show optimistic success and reload after 2s to let the Sheet update.
+    await fetch(CONFIG.appsScriptUrl, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error(`Apps Script ${res.status}`);
-    fb.textContent = '✓ Payment logged!';
+
+    fb.textContent = '✓ Payment logged! Refreshing…';
     fb.className = 'form-feedback success';
     document.getElementById('amountInput').value = '';
     document.getElementById('noteInput').value = '';
     document.getElementById('dateInput').value = todayISO();
-    setTimeout(() => loadPayments(), 800);
+    setTimeout(() => loadPayments(), 2000);
+
   } catch (e) {
     fb.textContent = 'Error saving. Check console.';
     fb.className = 'form-feedback error';
