@@ -373,6 +373,29 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* MAP STYLES */
+  .map-country-visited { fill: #f5c542; cursor: pointer; transition: fill 0.15s; }
+  .map-country-visited:hover { fill: #e8a020; }
+  .map-country-default { fill: #1e2940; stroke: #0d1520; stroke-width: 0.5; }
+  .map-country-default:hover { fill: #263450; cursor: default; }
+  .map-border { fill: none; stroke: #0d1520; stroke-width: 0.3; }
+  .map-pin-ring { fill: none; stroke: #f5c542; stroke-width: 1; opacity: 0.4; }
+  .map-pin-dot { fill: #f5c542; }
+  #map-tooltip {
+    position: fixed;
+    background: #1c2030;
+    border: 1px solid rgba(245,197,66,0.3);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: #f0f2f7;
+    pointer-events: none;
+    display: none;
+    z-index: 9999;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+  }
+
   @media (max-width: 680px) {
     header { padding: 18px 20px; }
     main { padding: 24px 16px 60px; }
@@ -399,6 +422,7 @@
 
 <main>
 
+  <!-- SUMMARY STRIP -->
   <div class="summary-strip">
     <div class="stat-card">
       <span class="stat-label">Total in fund</span>
@@ -417,10 +441,11 @@
     </div>
   </div>
 
+  <!-- FUND PROGRESS -->
   <div class="goal-section">
     <div class="goal-header">
       <span class="goal-title">Fund progress</span>
-      <span class="goal-amount" id="goalAmountLabel">$0 / $4,000</span>
+      <span class="goal-amount" id="goalAmountLabel">$0 / $4,875</span>
     </div>
     <div class="goal-bar-track">
       <div class="goal-bar-fill" id="goalBarFill" style="width:0%"></div>
@@ -433,6 +458,28 @@
     </div>
   </div>
 
+  <!-- WORLD MAP -->
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px">
+      <span class="panel-title" style="margin-bottom:0">Where we've been</span>
+      <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--text)">5 countries &middot; 4 continents</span>
+    </div>
+    <div style="border-radius:12px;overflow:hidden;background:#0d1520">
+      <svg id="world-map" viewBox="0 0 1000 500" style="width:100%;height:auto;display:block"></svg>
+    </div>
+    <div style="display:flex;gap:20px;margin-top:16px">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px rgba(245,197,66,0.4);flex-shrink:0"></div>
+        Been there
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)">
+        <div style="width:10px;height:10px;border-radius:50%;background:#1e2940;border:1px solid rgba(255,255,255,0.1);flex-shrink:0"></div>
+        Not yet
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM + HISTORY -->
   <div class="two-col">
 
     <div class="panel">
@@ -495,6 +542,13 @@
   </div>
 </main>
 
+<!-- MAP TOOLTIP -->
+<div id="map-tooltip"></div>
+
+<!-- D3 + TopoJSON for the world map -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+
 <script>
 // ─────────────────────────────────────────────────────────────────
 //  CONFIG
@@ -507,6 +561,57 @@ const CONFIG = {
   tripGoal:   4875,
   tripYear:   2027,
   members:    ['Devaughn', 'Nathan', 'Justin'],
+};
+
+// ─────────────────────────────────────────────────────────────────
+//  MAP CONFIG  — add future countries here
+// ─────────────────────────────────────────────────────────────────
+const MAP_VISITED = {
+  'Costa Rica': 'North America',
+  'Thailand':   'Asia',
+  'Brazil':     'South America',
+  'China':      'Asia',
+  'Peru':       'South America',
+};
+
+const MAP_COORDS = {
+  'Costa Rica': [-84.0,  9.7],
+  'Thailand':   [100.9, 15.9],
+  'Brazil':     [-51.9,-14.2],
+  'China':      [104.2, 35.9],
+  'Peru':       [-75.0, -9.2],
+};
+
+// Numeric ID → country name (ISO 3166-1 numeric, subset)
+const COUNTRY_IDS = {
+  '004':'Afghanistan','008':'Albania','012':'Algeria','024':'Angola',
+  '032':'Argentina','036':'Australia','040':'Austria','050':'Bangladesh',
+  '056':'Belgium','064':'Bhutan','068':'Bolivia','076':'Brazil',
+  '100':'Bulgaria','104':'Myanmar','116':'Cambodia','120':'Cameroon',
+  '124':'Canada','144':'Sri Lanka','152':'Chile','156':'China',
+  '170':'Colombia','188':'Costa Rica','191':'Croatia','192':'Cuba',
+  '203':'Czech Republic','208':'Denmark','214':'Dominican Republic',
+  '218':'Ecuador','818':'Egypt','231':'Ethiopia','246':'Finland',
+  '250':'France','276':'Germany','288':'Ghana','300':'Greece',
+  '320':'Guatemala','332':'Haiti','340':'Honduras','348':'Hungary',
+  '356':'India','360':'Indonesia','364':'Iran','368':'Iraq',
+  '372':'Ireland','376':'Israel','380':'Italy','388':'Jamaica',
+  '392':'Japan','400':'Jordan','398':'Kazakhstan','404':'Kenya',
+  '408':'North Korea','410':'South Korea','414':'Kuwait','418':'Laos',
+  '422':'Lebanon','434':'Libya','442':'Luxembourg','458':'Malaysia',
+  '484':'Mexico','504':'Morocco','508':'Mozambique','516':'Namibia',
+  '524':'Nepal','528':'Netherlands','554':'New Zealand','566':'Nigeria',
+  '578':'Norway','512':'Oman','586':'Pakistan','591':'Panama',
+  '600':'Paraguay','604':'Peru','608':'Philippines','616':'Poland',
+  '620':'Portugal','630':'Puerto Rico','634':'Qatar','642':'Romania',
+  '643':'Russia','682':'Saudi Arabia','686':'Senegal','694':'Sierra Leone',
+  '703':'Slovakia','706':'Somalia','710':'South Africa','724':'Spain',
+  '729':'Sudan','752':'Sweden','756':'Switzerland','760':'Syria',
+  '158':'Taiwan','762':'Tajikistan','764':'Thailand','768':'Togo',
+  '788':'Tunisia','792':'Turkey','800':'Uganda','804':'Ukraine',
+  '784':'United Arab Emirates','826':'United Kingdom','840':'United States',
+  '858':'Uruguay','860':'Uzbekistan','862':'Venezuela','704':'Vietnam',
+  '887':'Yemen','894':'Zambia','716':'Zimbabwe',
 };
 
 // ─────────────────────────────────────────────────────────────────
@@ -530,10 +635,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('dateInput').value = todayISO();
   loadPayments();
+  initMap();
 });
 
 // ─────────────────────────────────────────────────────────────────
-//  READ — Google Sheets API (read-only, uses API key)
+//  WORLD MAP
+// ─────────────────────────────────────────────────────────────────
+function initMap() {
+  const svg     = d3.select('#world-map');
+  const tooltip = document.getElementById('map-tooltip');
+  const W = 1000, H = 500;
+  const proj = d3.geoNaturalEarth1().scale(153).translate([W / 2, H / 2]);
+  const path = d3.geoPath().projection(proj);
+
+  svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#0d1520');
+
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    .then(r => r.json())
+    .then(world => {
+      const features = topojson.feature(world, world.objects.countries).features;
+
+      svg.selectAll('path.country')
+        .data(features)
+        .enter()
+        .append('path')
+        .attr('class', d => {
+          const name = COUNTRY_IDS[String(d.id).padStart(3, '0')];
+          return name && MAP_VISITED[name] ? 'map-country-visited' : 'map-country-default';
+        })
+        .attr('d', path)
+        .on('mousemove', function(event, d) {
+          const name = COUNTRY_IDS[String(d.id).padStart(3, '0')];
+          if (!name) return;
+          const continent = MAP_VISITED[name];
+          tooltip.innerHTML = continent
+            ? '<strong style="color:#f5c542">' + name + '</strong><br><span style="color:#7a8299;font-size:11px">' + continent + '</span>'
+            : '<span style="color:#7a8299">' + name + '</span>';
+          tooltip.style.display = 'block';
+          tooltip.style.left = (event.clientX + 14) + 'px';
+          tooltip.style.top  = (event.clientY - 10) + 'px';
+        })
+        .on('mouseleave', () => tooltip.style.display = 'none');
+
+      svg.append('path')
+        .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
+        .attr('class', 'map-border')
+        .attr('d', path);
+
+      Object.entries(MAP_COORDS).forEach(([name, [lon, lat]]) => {
+        const [x, y] = proj([lon, lat]);
+        svg.append('circle').attr('cx', x).attr('cy', y).attr('r', 10).attr('class', 'map-pin-ring');
+        svg.append('circle').attr('cx', x).attr('cy', y).attr('r', 5).attr('class', 'map-pin-dot');
+      });
+    })
+    .catch(err => console.error('Map load error:', err));
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  READ — Google Sheets API
 // ─────────────────────────────────────────────────────────────────
 async function loadPayments() {
   setStatus('Syncing...', '');
@@ -562,7 +721,7 @@ async function loadPayments() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  WRITE — Cloudflare Worker proxy (handles CORS server-side)
+//  WRITE — Cloudflare Worker proxy
 // ─────────────────────────────────────────────────────────────────
 async function logPayment() {
   const payer  = document.getElementById('payerSelect').value;
@@ -584,13 +743,11 @@ async function logPayment() {
 
   try {
     const payload = { date, member: payer, amount, note };
-
     const res = await fetch(CONFIG.workerUrl, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(payload),
     });
-
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || 'HTTP ' + res.status);
 
@@ -600,7 +757,6 @@ async function logPayment() {
     document.getElementById('noteInput').value   = '';
     document.getElementById('dateInput').value   = todayISO();
     setTimeout(() => loadPayments(), 1500);
-
   } catch (e) {
     fb.textContent = 'Error: ' + e.message;
     fb.className = 'form-feedback error';
@@ -614,18 +770,13 @@ async function logPayment() {
 // ─────────────────────────────────────────────────────────────────
 //  RENDER
 // ─────────────────────────────────────────────────────────────────
-function renderAll() {
-  renderSummary();
-  renderGoal();
-  renderHistory();
-}
+function renderAll() { renderSummary(); renderGoal(); renderHistory(); }
 
 function renderSummary() {
   const total = payments.reduce((s, p) => s + p.amount, 0);
   document.getElementById('totalFund').textContent     = fmt(total);
   document.getElementById('totalSub').textContent      = 'across ' + CONFIG.members.length + ' members';
   document.getElementById('totalContribs').textContent = payments.length;
-
   const last = [...payments].sort((a, b) => b.date.localeCompare(a.date))[0];
   if (last) {
     document.getElementById('lastPayment').textContent = last.member;
@@ -639,9 +790,8 @@ function renderSummary() {
 function renderGoal() {
   const total = payments.reduce((s, p) => s + p.amount, 0);
   const pct   = Math.min(100, (total / CONFIG.tripGoal) * 100);
-  document.getElementById('goalBarFill').style.width        = pct + '%';
-  document.getElementById('goalAmountLabel').textContent    = fmt(total) + ' / ' + fmt(CONFIG.tripGoal);
-
+  document.getElementById('goalBarFill').style.width     = pct + '%';
+  document.getElementById('goalAmountLabel').textContent = fmt(total) + ' / ' + fmt(CONFIG.tripGoal);
   const breakdown = document.getElementById('memberBreakdown');
   breakdown.innerHTML = '';
   CONFIG.members.forEach(m => {
@@ -651,11 +801,9 @@ function renderGoal() {
     const pill  = document.createElement('div');
     pill.className = 'member-pill';
     pill.innerHTML =
-      '<span class="member-name">'  + m          + '</span>'
-    + '<span class="member-paid">'  + fmt(paid)  + '</span>'
-    + '<div class="member-bar-track">'
-    +   '<div class="member-bar-fill" style="width:' + mPct + '%"></div>'
-    + '</div>';
+      '<span class="member-name">' + m + '</span>'
+    + '<span class="member-paid">' + fmt(paid) + '</span>'
+    + '<div class="member-bar-track"><div class="member-bar-fill" style="width:' + mPct + '%"></div></div>';
     breakdown.appendChild(pill);
   });
 }
@@ -691,25 +839,21 @@ function renderEmpty(msg) {
 function fmt(n) {
   return '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-
 function todayISO() {
   return new Date().toISOString().split('T')[0];
 }
-
 function fmtDate(iso) {
   if (!iso) return '--';
   const parts  = iso.split('-');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return months[parseInt(parts[1]) - 1] + ' ' + parseInt(parts[2]) + ', ' + parts[0];
 }
-
 function setStatus(text, state) {
   document.getElementById('statusText').textContent = text;
   const dot = document.getElementById('statusDot');
   dot.className = 'status-dot' + (state ? ' ' + state : '');
 }
 
-// Auto-refresh every 60 seconds
 setInterval(loadPayments, 60000);
 </script>
 </body>
